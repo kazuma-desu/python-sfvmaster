@@ -4,8 +4,19 @@
 
 ### This file only contains information on public releases of said package since most unpublic releases(ex: v9.0.1) usually are minor updates(Like fixing multiple typos or something simillar) and irrelavent to end-users or developers
 
+## [0.9.1.3b1] 2018-07-14
 
-## [9.1.1b1] 2018-07-09
+###Added
+-Keyboard Interupt handling
+
+###Fixed
+-Fixed bug when using certain arguments together(like -a -s)
+
+###Changed
+-Made the way that file extensions are understod by the program more efficent.
+
+## [0.9.1.1b1] 2018-07-09
+
 ###Added
 -Added directory recursion.
 -Slightly faster (very slightly) excution.

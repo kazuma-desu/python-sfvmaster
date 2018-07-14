@@ -23,7 +23,7 @@ def CRC32_from_file(file):
 def verify_in_filename(files):
     try:
         filename = str(files[files.rfind("/") + 1:])
-        filename = filename[0:44] + '...'
+        filename = filename[0:42] + '...'
         filename_crc = re.search(crc_regex, files, re.I)
         filename_crc = str.upper(filename_crc.group(2))
         current = CRC32_from_file(files)
@@ -31,13 +31,13 @@ def verify_in_filename(files):
             status = 'File Ok'
         else:
             status = 'File Corrupt'
-        print('{:49s} {:20s}{:8s}'.format(filename,
+        print('{:47s} {:22s}{:8s}'.format(filename,
                                           status,
                                           current))
     except AttributeError as err:
-        status = 'No CRC32 found'
+        status = 'No CRC32 in filename'
         current = CRC32_from_file(files)
-        print('{:49s} {:20s}{:8s}'.format(filename,
+        print('{:47s} {:22s}{:8s}'.format(filename,
                                           status,
                                           current))
     except FileNotFoundError as err:
@@ -45,19 +45,36 @@ def verify_in_filename(files):
 
 
 def append_to_filename(file_in):
+    _, ext = os.path.splitext(file_in)
+    if ext != '.sfv':
+        try:
+            already_appended = re.search(crc_regex, file_in, re.I)
+            if already_appended:
+                print(file_in[file_in.rfind("/") + 1:],
+                      ': already contains a CRC32 in file name.')
+                return file_in
+            else:
+                print('{} ...'.format(file_in))
+                crc = CRC32_from_file(file_in)
+                basename, ext = splitext(file_in)
+                os.rename(file_in, '{} [{}]{}'.format(basename, crc, ext))
+                new_filename = ('{} [{}]{}'.format(basename, crc, ext))
+                print(crc + ' Done')
+                return new_filename
+        except FileNotFoundError:
+            print('No such file or directory:', file_in)
+    else:
+        return file_in
+
+
+def remove_from_filename(file_in):
     try:
-        already_appended = re.search(crc_regex, file_in, re.I)
-        if already_appended:
-            print (file_in[file_in.rfind("/") + 1:],
-                   ': already contains a CRC32 in file name.')
-        else:
-            print('{} ...'.format(file_in))
-            crc = CRC32_from_file(file_in)
-            basename, ext = splitext(file_in)
-            os.rename(file_in, '{} [{}]{}'.format(basename, crc, ext))
-            print (crc + ' Done')
-    except FileNotFoundError:
-        print('No such file or directory:', file_in)
+        regex = re.compile(r"(\s?\[|\s?\()([0-f]{8})(\]|\))", re.I)
+        filename_crc = re.search(regex, file_in)
+        new_filename = file_in.replace(filename_crc.group(0), '')
+        os.rename(file_in, new_filename)
+    except AttributeError:
+        print('{} has no CRC32 to remove'.format(file_in))
 
 
 def verify_sfv_file(file_in):
@@ -105,7 +122,8 @@ def create_sfv_file(sfv_filename, in_files):
 
         buf.write(head)
         for fname in in_files:
-            if(fname[-4:] != '.sfv'):
+            _, ext = os.path.splitext(fname)
+            if(ext != '.sfv'):
                 try:
                     file_crc = CRC32_from_file(fname)
                     buf.write('{} {}\n'.format(fname, file_crc))

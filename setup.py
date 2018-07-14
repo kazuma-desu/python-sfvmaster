@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='zencrc',
-    version='0.9.1.1b1',  # PEP440
+    version='0.9.1.3b1',  # PEP440
     url='https://github.com/kazuma-desu/python-zencrc',
     license='GNU GPLv3',
     author='Kavintha Kulasingham',

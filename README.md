@@ -32,7 +32,7 @@ This section will explain all the functions and options available in ZenCRC:
 
     $ zencrc --help
 
-A more concise version of this help can be hound by using the `--help` or `-h`
+A more concise version of this help can be found by using the `--help` or `-h`
 option.
 
 ### Append Mode
@@ -48,9 +48,11 @@ The CRC will be appended to the end of the file in the following format:
     filename.ext --> filename [CRC].ext
 
 So, therefore:
+
     $ zencrc -a [LNS]Gin no Saji [720p-BD-AAC].mkv
 
 will return:
+
     [LNS]Gin no Saji [720p-BD-AAC] [72A89BC1].mkv
 
 Currently no functionality exists to change the format in which the CRC
@@ -96,31 +98,46 @@ You can verify .sfv files using this option.
     $ zencrc -r -{a|v|s|c}
 
 This function ideally would scan directories recursivly and apply the
-above-mentioned accordingly, though recursion actually doesnt do anythin
-at this point. Either way version 0.9 would most definitely have this function.
-__Version 0.9b is already in development__
+above-mentioned accordingly, though recursion has some minor bugs on some windows systems
 
 ## Things to expect in the future / Dev notes
-__This version refers to version "0.9.1.1b1" from this poin onwards__
 
-### A GUI 
--This is something that I've already been working on since the begining of this project.
- While it is far from complete it is also definitely coming, so there's that.
+**"This version" refers to version "0.9.1.3b1" from this point onwards**
+
+### A GUI
+
+-This is something that I've already been working on since the begining of this project. (while it is far from complete it is also definitely coming).
 
 -Currently in the stage of design.
 
 -Probably will use this CLI tool as the main code base.
 
-### Better CRC manipulation 
+### Better CRC manipulation
+
 -This includes better and more efficent funcions to calculate and implement CRC32 checksums.
--Currently Alpha testing with "zlib" to see which is faster(compared against "binascii").
+
+-Currently Alpha testing a version with "zlib" to see which is faster(compared to "binascii").
 
 ### Better argument parsing
+
 -This version using argparse works but it also has its quirks, so possible fixes to those.
+
 -Possibly might switch to click in a future version. Possibly.
+
 -Small issue when using some arguments together(like -a & -s) will be fixed in next version
 
 ### Python 2 support and Cross-platform support
--Currently writen and supports only Python 3 hoping to fix that in the near future
- (I know this a easy and simple thing to do but for now it will remain in Python 3)
--Non-critical file structure recursion issues in Windows hoping to fix that soon 
+
+-Currently writen and supports only Python 3 hoping to fix that in the near future(I know this a easy and simple thing to do but for now it will remain in Python 3)
+
+-Non-critical file structure recursion issues in Windows hoping to fix that soon
+
+### Progress bars and other visual improvements
+
+-Future versions will have a better looking terminal interface
+
+-Progress bars to indicate, well, progress.
+
+-Better formatted terminal output in general
+
+-Colored terminal output

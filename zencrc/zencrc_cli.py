@@ -1,10 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-# SFV Master ver 1.0 Beta
+# ZenCRC ver 0.9.1.1 Beta
 
 import os
 import argparse
 from zencrc import crc32
+
+__version__ = "0.9.1.3b1"  # PEP440
 
 
 def expand_dirs(dirlist):
@@ -21,8 +23,7 @@ def expand_dirs(dirlist):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='ZenCRC ver 0.8 Beta')
-
+    parser = argparse.ArgumentParser(description='ZenCRC ver 0.9 Beta')
     parser.add_argument('-a',
                         '--append',
                         action='store_true',
@@ -47,19 +48,27 @@ def main():
                         action='store_true',
                         help='Run program recursively')
 
+    parser.add_argument('-d', '--delete',
+                        action='store_true',
+                        help='Remove a CRC32 checksum from a filename')
+
+    parser.add_argument('--version',
+                        action='store_true',
+                        help='Print version information and exit')
+
     parser.add_argument('file', nargs='+', help='Input File')
 
     args = parser.parse_args()
 
-    filelist = args.file
-
     if args.recurse:
-        filelist = expand_dirs(filelist)
+        filelist = expand_dirs(args.file)
+    else:
+        filelist = args.file
 
     if args.verify:
         try:
             print('Verify Mode:\n')
-            print('{:50s}{:20s}{:8s}'.format('Filename', 'Status', 'CRC32'))
+            print('{:48s}{:22s}{:8s}'.format('Filename', 'Status', 'CRC32'))
             for i in filelist:
                 if os.path.isdir(i):
                     continue
@@ -67,20 +76,33 @@ def main():
                     crc32.verify_in_filename(i)
         except FileNotFoundError as err:
             print(err)
+        except KeyboardInterrupt:
+            print('Operation cancelled by user.')
 
     if args.append:
+        new_filelist = []
         try:
             print('Append Mode:')
             for i in filelist:
                 if os.path.isdir(i):
                     continue
                 else:
-                    crc32.append_to_filename(i)
+                    new_filelist.append(crc32.append_to_filename(i))
+            print(filelist)
+            filelist = new_filelist
         except FileNotFoundError:
             pass
 
+    if args.delete:
+        for f in filelist:
+            crc32.remove_from_filename(f)
+
     if args.sfv:
-        crc32.create_sfv_file(args.sfv, filelist)
+        print(filelist)
+        if args.recurse:
+            crc32.create_sfv_file(args.sfv, filelist)
+        else:
+            crc32.create_sfv_file(args.sfv, filelist)
 
     if args.checksfv:
         try:
@@ -89,6 +111,10 @@ def main():
         except IsADirectoryError as err:
             print(err)
 
+    if args.version:
+        print(__version__)
+
+os.getcwd
 
 if (__name__ == '__main__'):
         main()
